@@ -59,6 +59,7 @@ int main(int argc, char **argv) {
   TFile *fout = new TFile(outputs.Data(),"RECREATE");
   fout->cd();//opening of the output file
 
+  JHistos *fhistos = new JHistos();
   //---------------------
   //Pythia initialization 
   //---------------------
@@ -95,8 +96,7 @@ int main(int argc, char **argv) {
   //------------------------------------------------------------------
   // Define jet reconstruction
   //------------------------------------------------------------------
-  vector<PseudoJet> finalparticles;
-  vector<PseudoJet> chparticles;
+  vector<PseudoJet> finalparticles; // for full jet
 
   double PartMinPtCutForJet = 0.5;// atlas paper
   double etaMaxCutForJet = 1.2;///
@@ -128,18 +128,7 @@ int main(int argc, char **argv) {
       // Make sure "applying same cut done in ATLAS paper ?  flavor of the parciles ,eta , min pt cut 
       if (pythia.event[i].isFinal() && TMath::Abs(pythia.event[i].eta()) < etaMaxCutForPart && pythia.event[i].pT()>PartMinPtCutForJet){
         // Building the charged particle list to be used for manual constituent construction instead of using fastjet consistuents.
-        if( pythia.event[i].isCharged() && pythia.event[i].isHadron() ) { // Only check if it is charged and hadron since the acceptance was checked in the previous if
-          chparticles.push_back( PseudoJet(pythia.event[i].px(), pythia.event[i].py() , pythia.event[i].pz(), pythia.event[i].e() ) );
-        }
-
-        finalparticles.push_back( particle );
-
-        TLorentzVector lvparticle(pythia.event[i].px(), pythia.event[i].py(), pythia.event[i].pz(), pythia.event[i].e());
-        AliJBaseTrack track( lvparticle );
-        track.SetID(pythia.event[i].id());
-        track.SetParticleType(kJHadron);
-        track.SetTrackEff(1.);
-        new ((*inputList)[inputList->GetEntriesFast()]) AliJBaseTrack(track);
+        finalparticles.push_back( PseudoJet(pythia.event[i].px(), pythia.event[i].py() , pythia.event[i].pz(), pythia.event[i].e()) );
 
       } // end of finalparticles
     }
@@ -153,7 +142,7 @@ int main(int argc, char **argv) {
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Loop over jets and fill various histos 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    for (unsigned i = 0; i < jets.size(); i++) {
+    for (auto int i = 0; i < jets.size(); i++) {
       // jet eta cut
       if(fabs(jets[i].eta())>etaMaxCutForJet) continue; 
 
@@ -168,29 +157,8 @@ int main(int argc, char **argv) {
 
       TLorentzVector lvjet = TLorentzVector(jets[i].px(),jets[i].py(),jets[i].pz(),jets[i].e());//creating the jet lorentz vector for the deltar calculation
 
-      //Charged particle loop
-      int counter = 0;
-      for(unsigned k = 0; k<chparticles.size() ; k++){
-        TLorentzVector lvpart = TLorentzVector(chparticles[k].px(),chparticles[k].py(),chparticles[k].pz(),chparticles[k].e());//particle lorentz vector
-        double dist=lvjet.DeltaR(lvpart);//delta R distance=sqrt(...)
-        if (dist<coneR){
-          counter++;
-          double dotproductch=dotproduct(lvjet,lvpart); 
-          double zch=dotproductch/(jets[i].modp2());
-          double xich=TMath::Log(1./zch);
-          fhistos->fhZch[ptbin]->Fill(zch);
-          fhistos->fhZchLogBin[ptbin]->Fill(zch);
-          fhistos->fhXich[ptbin]->Fill(xich);
-        }
-      }
-      fhistos->fhJetNch[ptbin]->Fill(counter); 
-      fhistos->fhTriggPtBin[ptbin]->Fill(jets[i].pt());
-      fhistos->fhJetPseudorap[ptbin]->Fill(jets[i].eta());
-      fhistos->fhJetrap[ptbin]->Fill(jets[i].rap());
-
       //Consistuents loop
-      int Np=0,Nn=0;
-      for (unsigned j = 0; j < constituents.size(); j++) {
+      for (unsigned int j = 0; j < constituents.size(); j++) {
         TLorentzVector lvfinalpart = TLorentzVector(constituents[j].px(),constituents[j].py(),constituents[j].pz(),constituents[j].e()); //
         double dotproductall=dotproduct(lvjet,lvfinalpart); 
         double z=dotproductall/(jets[i].modp2());
@@ -200,9 +168,6 @@ int main(int argc, char **argv) {
         fhistos->fhXi[ptbin]->Fill(xi);
       } // end of constituents loop
       fhistos->fhJetN[ptbin]->Fill(constituents.size());// number of all particle per jet histo
-      double nr = double(Nn)/double(Np);
-      fhistos->fhChargeRatioInJet[ptbin]->Fill(nr);
-      if(DEBUG) printf("Charge info in a jet ::: pT=%.1f Np=%d Nn=%d %.1f\n",jets[i].pt(),Np,Nn,nr);
 
     }//end of the jet loop
     EventCounter++;
