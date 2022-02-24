@@ -24,9 +24,9 @@ int main(int argc, char **argv)
 
   TROOT root("flow_jet","run mc");
 
-  if ( argc<9 ) {
+  if ( argc<7 ) {
         cout<<"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"<<endl;
-        cout<<"+  "<<argv[0]<<" <outputFile> <N_ch in midrapidity><pTHardMin> <random seed> <Nevt>"<<endl;
+        cout<<"+  "<<argv[0]<<" <outputFile> <N_ch in midrapidity><eta_min><eta_max><pTHardMin> <random seed> <Nevt>"<<endl;
         cout << endl << endl;
         exit(1);
   }

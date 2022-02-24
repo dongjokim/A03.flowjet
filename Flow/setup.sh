@@ -6,6 +6,6 @@ export PYTHIA8=$HOME/softwares/pythia8303
 export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:$PYTHIA8/lib
 export PATH=${PATH}:$PYTHIA8/bin
 export FASTJET=$HOME/softwares/fastjet-3.3.3/fastjet-install
-PATH=$PATH:${FASTJET}/bin
+export PATH=$PATH:${FASTJET}/bin
 
 

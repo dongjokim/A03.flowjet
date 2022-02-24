@@ -15,10 +15,16 @@
 #include <iostream>
 
 #include <TClonesArray.h>
+#include <TLorentzVector.h>
+#include "src/AliJBaseTrack.h"
+#include "src/AliJCard.h"
+#include "src/JHistos.h"
 
 using namespace std;
 using namespace Pythia8; 
 using namespace fastjet;
+
+double dotproduct(TLorentzVector jets,TLorentzVector particles);
 
 class MyUserInfo : public PseudoJet::UserInfoBase{
   public:
@@ -50,16 +56,22 @@ int main(int argc, char **argv) {
   timer.Start();   
 
   char* pythiaconfig  = argv[1];
-  double pTHatMin     = atof(argv[2]);
-  double pTHatMax     = atof(argv[3]);
-  TString outputs = argv[4];
-  Int_t random_seed = argc>5 ? atoi(argv[5]) : 0;//placing the inputs into variables
+  char* cardInput     = argv[2];
+  double pTHatMin     = atof(argv[3]);
+  double pTHatMax     = atof(argv[4]);
+  TString outputs = argv[5];
+  Int_t random_seed = argc>6 ? atoi(argv[7]) : 0;//placing the inputs into variables
 
 
   TFile *fout = new TFile(outputs.Data(),"RECREATE");
   fout->cd();//opening of the output file
 
-  JHistos *fhistos = new JHistos();
+  AliJCard *fcard = new AliJCard(cardInput);
+  JHistos *fhistos = new JHistos(fcard);
+  fhistos->CreateQAHistos();
+  fhistos->CreateFFHistos();
+  fhistos->CreateDiJetHistos();
+
   //---------------------
   //Pythia initialization 
   //---------------------
@@ -106,7 +118,7 @@ int main(int argc, char **argv) {
 
   JetDefinition jet_def(antikt_algorithm, coneR); 
 
-  TClonesArray *inputList = new TClonesArray("AliJBaseTrack",1500);
+  //TClonesArray *inputList = new TClonesArray("AliJBaseTrack",1500);
   //--------------------------------------------------------
   //         B e g i n    e v e n t    l o o p.
   //--------------------------------------------------------
@@ -119,11 +131,10 @@ int main(int argc, char **argv) {
 
     if (!pythia.next()) continue;
     finalparticles.clear();
-    chparticles.clear();
     if(iEvent % ieout == 0) cout << iEvent << "\t" << int(float(iEvent)/nEvent*100) << "%" << endl ;
-    int icent = 0;
+    //int icent = 0;
     
-    for (int i = 0; i < pythia.event.size(); ++i) {//loop over all the particles in the event
+    for (unsigned int i = 0; i < pythia.event.size(); ++i) {//loop over all the particles in the event
       // Building input particle list for the jet reconstruction
       // Make sure "applying same cut done in ATLAS paper ?  flavor of the parciles ,eta , min pt cut 
       if (pythia.event[i].isFinal() && TMath::Abs(pythia.event[i].eta()) < etaMaxCutForPart && pythia.event[i].pT()>PartMinPtCutForJet){
@@ -137,12 +148,12 @@ int main(int argc, char **argv) {
     // Run the clustering, Reconstruct jets
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     ClusterSequence cs(finalparticles, jet_def);
-    vector<PseudoJet> jets = sorted_by_pt(cs.inclusive_jets(MinJetPt)); // APPLY Min pt cut for jet
+    vector<PseudoJet> jets = sorted_by_pt(cs.inclusive_jets()); // APPLY Min pt cut for jet
 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Loop over jets and fill various histos 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    for (auto int i = 0; i < jets.size(); i++) {
+    for (unsigned int i = 0; i < jets.size(); i++) {
       // jet eta cut
       if(fabs(jets[i].eta())>etaMaxCutForJet) continue; 
 

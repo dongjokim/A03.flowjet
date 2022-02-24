@@ -13,21 +13,12 @@ SOFLAGS       = -shared
 CXXFLAGS += $(shell root-config --cflags)
 LDFLAGS  = $(shell root-config --libs)
 CXXFLAGS += $(shell $(FASTJET)/bin/fastjet-config --cxxflags )
-#LDFLAGS += -Wl,-rpath,/cvmfs/alice.cern.ch/x86_64-2.6-gnu-4.1.2/Packages/fastjet/v3.2.1_1.024-alice1-3/lib -lm  -L/cvmfs/alice.cern.ch/x86_64-2.6-gnu-4.1.2/Packages/fastjet/v3.2.1_1.024-alice1-3/lib -lfastjettools -lfastjet 
-#LDFLAGS += -Wl,-rpath,/cvmfs/alice.cern.ch/x86_64-2.6-gnu-4.1.2/Packages/fastjet/v3.0.6_1.012-7/lib -lm  -L/cvmfs/alice.cern.ch/x86_64-2.6-gnu-4.1.2/Packages/fastjet/v3.0.6_1.012-7/lib -lfastjettools -lfastjet
-LDFLAGS += $(shell $(FASTJET)/bin/fastjet-config --libs --plugins ) 
 LDFLAGS += -L$(PYTHIA8)/lib -lpythia8 
 INCS    += -I$(PYTHIA8)/include
-#LDFLAGS += -L$(HEPMC)/lib -lHepMC 
-#LDFLAGS += -Wl,-rpath -Wl,$(HEPMC)/lib
-#LDFLAGS += -L$(HEPPDT)/lib -lHepPDT -lHepPID
-#LDFLAGS += -Wl,-rpath -Wl,$(HEPPDT)/lib
-#INCS    += -I$(HEPMC)/include
-#INCS    += -I$(HEPPDT)/include
 CXXFLAGS  += $(INCS)
 LDFLAGS += $L -ldl
 
-HDRSDICT = src/AliJBaseCard.h src/JHistos.h src/AliJBaseTrack.h #For pythiaChargedJet and others
+HDRSDICT = src/AliJBaseCard.h src/AliJCard.h src/JHistos.h src/AliJBaseTrack.h 
            
 HDRS	+= $(HDRSDICT)  nanoDict.h
 
