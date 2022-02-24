@@ -1,0 +1,59 @@
+#!/bin/csh -f
+############################
+
+
+set PROG=`basename $0`
+ if ( $#argv < 7 ) then
+  echo
+  echo "Usage: $PROG <outname>  "
+  exit
+endif
+
+setenv Nch_mid     $1
+setenv Nch_forward $2
+setenv eta_min     $3
+setenv eta_max     $4
+setenv pTHardMin   $5
+setenv Nevt        $6
+setenv comment     $7
+#################################
+# Output file locations
+#################################
+setenv Main_DIR     `pwd`
+setenv DoWhat       flow_jet
+setenv oname        flowjet_${Nch_mid}_${Nch_forward}_${eta_min}_${eta_max}_${pTHardMin}_${comment}
+setenv Disk         `pwd`
+setenv OUT_ERRORS   $Disk/outputs/${oname}/errors
+setenv Out_DIR      $Disk/outputs/${oname}/data
+setenv LOG_DIR      $Disk/outputs/${oname}/logs
+#################################
+# Need for serial job in sepeli(pbs)
+#################################
+setenv noFileToRun 100
+#################################
+
+mkdir -p $OUT_ERRORS
+mkdir -p $Out_DIR
+mkdir -p $LOG_DIR
+
+#################################
+# Runlist to scan
+#################################
+
+# simplify this !!! 
+cat << EOF > exec_jtkt_$oname
+#!/bin/csh -f
+cd $Main_DIR
+setenv what  $DoWhat
+setenv sedN  30000000
+setenv iseg \$SGE_TASK_ID
+@ sedN = \${sedN} + \${iseg}
+setenv outfile  $Out_DIR/$DoWhat-\$sedN.root 
+setenv Log      $LOG_DIR/$DoWhat-\$sedN.log
+\${what} \$outfile ${Nch_mid} ${Nch_forward} ${eta_min} ${eta_max} ${pTHardMin}  \$sedN ${Nevt} >& \$Log
+cd $Main_DIR
+EOF
+#\${what} \$outfile \$sedN 5000000 >& \$Log
+chmod +x exec_jtkt_$oname
+	#qsub -a 201008240200 -V -t 1-$noFileToRun -S /bin/tcsh -r y -e $OUT_ERRORS -o $OUT_ERRORS exec_jtkt_$comment
+	qsub -V -t 1-$noFileToRun -S /bin/tcsh -r y -e $OUT_ERRORS -o $OUT_ERRORS exec_jtkt_$comment

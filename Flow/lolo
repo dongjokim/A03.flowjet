@@ -1,0 +1,16 @@
+#! /bin/bash
+
+dir=$1
+rm -f dummy
+
+find $dir/logs/ -name '*.log' | while read f
+do
+    result=`tail -n1 $f`
+    echo $f" --- "$result
+done | tee dummy
+
+fin=`grep Good dummy |wc -l`
+ufin=`grep -v Good dummy |wc -l`
+echo "++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "finished="$fin" running="$ufin
+echo "++++++++++++++++++++++++++++++++++++++++++++++++"
