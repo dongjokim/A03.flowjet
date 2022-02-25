@@ -1,0 +1,8 @@
+
+Jet/jetreco.dSYM/Contents/Info.plist
+Jet/nanoDict.cc
+Jet/nanoDict.o
+Jet/nanoDict_rdict.pcm
+Jet/src/AliJBaseCard.o
+Jet/src/AliJBaseTrack.o
+*.o

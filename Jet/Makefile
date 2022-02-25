@@ -13,6 +13,7 @@ SOFLAGS       = -shared
 CXXFLAGS += $(shell root-config --cflags)
 LDFLAGS  = $(shell root-config --libs)
 CXXFLAGS += $(shell $(FASTJET)/bin/fastjet-config --cxxflags )
+LDFLAGS  = $(shell $(FASTJET)/bin/fastjet-config --libs)
 LDFLAGS += -L$(PYTHIA8)/lib -lpythia8 
 INCS    += -I$(PYTHIA8)/include
 CXXFLAGS  += $(INCS)

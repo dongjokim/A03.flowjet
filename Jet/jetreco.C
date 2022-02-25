@@ -12,6 +12,7 @@
 #include <TStopwatch.h>
 
 #include "fastjet/ClusterSequence.hh"
+#include "fastjet/PseudoJet.hh"
 #include <iostream>
 
 #include <TClonesArray.h>
@@ -148,7 +149,7 @@ int main(int argc, char **argv) {
     // Run the clustering, Reconstruct jets
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     ClusterSequence cs(finalparticles, jet_def);
-    vector<PseudoJet> jets = sorted_by_pt(cs.inclusive_jets()); // APPLY Min pt cut for jet
+    vector<PseudoJet> jets = sorted_by_pt(cs.inclusive_jets(MinJetPt)); // APPLY Min pt cut for jet
 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Loop over jets and fill various histos 
