@@ -3,7 +3,7 @@ PROGRAM       = jetreco
 version       = JTKT
 CXX           = g++
 #CXXFLAGS      = -O -Wall -g -Wno-deprecated -bind_at_load -D$(version)
-CXXFLAGS      = -O -Wall -g -Wno-deprecated -Wno-misleading-indentation -D$(version) #-ggdb
+CXXFLAGS      =  -Wall -W
 LD            = g++
 LDFLAGS       = -O
 SOFLAGS       = -shared
@@ -31,7 +31,7 @@ all:            $(PROGRAM)
 
 $(PROGRAM):     $(OBJS) src/AliJConst.h $(PROGRAM).C
 		@echo "Linking $(PROGRAM) ..."
-		$(CXX)  -lPhysics -L$(PWD) $(PROGRAM).C $(CXXFLAGS) $(OBJS) $(LDFLAGS) -o $(PROGRAM) 
+		$(CXX)   -L$(PWD) $(PROGRAM).C $(CXXFLAGS) $(OBJS) $(LDFLAGS) -o $(PROGRAM) 
 		@echo "finally done"
 
 %.cxx:

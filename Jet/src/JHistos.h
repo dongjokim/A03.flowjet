@@ -5,6 +5,10 @@
 #ifndef JHISTOS_H
 #define JHISTOS_H
 
+#ifndef ROOT_TObject
+#include <TObject.h>
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>

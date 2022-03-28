@@ -6,7 +6,9 @@
 #ifndef ALIJBASECARD_H
 #define ALIJBASECARD_H
 
+#ifndef ROOT_TObject
 #include <TObject.h>
+#endif
 
 #include <iostream>
 #include <fstream>
