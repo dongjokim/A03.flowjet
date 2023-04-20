@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
     if(iEvent % ieout == 0) cout << iEvent << "\t" << int(float(iEvent)/nEvent*100) << "%" << endl ;
     //int icent = 0;
     
-    for (unsigned int i = 0; i < pythia.event.size(); ++i) {//loop over all the particles in the event
+    for (int i = 0; i < pythia.event.size(); ++i) {//loop over all the particles in the event
       // Building input particle list for the jet reconstruction
       // Make sure "applying same cut done in ATLAS paper ?  flavor of the parciles ,eta , min pt cut 
       if (pythia.event[i].isFinal() && TMath::Abs(pythia.event[i].eta()) < etaMaxCutForPart && pythia.event[i].pT()>PartMinPtCutForJet){
