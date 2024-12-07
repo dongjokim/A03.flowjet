@@ -50,9 +50,10 @@ class MyUserInfo : public PseudoJet::UserInfoBase{
 
 int main(int argc, char **argv) {
 
-  if(argc<4){
-    cout<<"usage: pythia pythia.config card.input <output.root> [random_seed]"<<endl;exit(1);//usage of the code, requieres 4 inputs
-  }
+  if(argc < 6){
+    std::cerr << "Usage: " << argv[0] << " pythia.config card.input <pTHatMin> <pTHatMax> <output.root> [random_seed]" << std::endl;
+    exit(1);
+}
   TStopwatch timer; 
   timer.Start();   
 
