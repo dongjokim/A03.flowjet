@@ -51,6 +51,8 @@ EtaBoost                -0.465 0
 
 DPhiUERegion            0.325 0.475
 
+DiJetMassBorders 10 20 30 40 50 # Temporary (no physical meaning)
+
 #======= Isolation tracks =============
 IsolationR              0.4 #isolation radius for higher twist
 CutOnBkgActivity        0.10 #cut on activity around leading particle   sum of assoc pt / LP pt
